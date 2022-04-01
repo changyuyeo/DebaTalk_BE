@@ -27,4 +27,15 @@ export class CatsRepository {
 	async create(cat: CatRequestDto): Promise<Cat> {
 		return await this.catModel.create(cat)
 	}
+
+	async findByIdAndUpdateImg(id: string, fileName: string) {
+		const cat = await this.catModel.findById(id)
+		cat.imgUrl = `http://localhost:8080/media/${fileName}`
+		const newCat = await cat.save()
+		return newCat.readOnlyData
+	}
+
+	async findAll() {
+		return await this.catModel.find()
+	}
 }

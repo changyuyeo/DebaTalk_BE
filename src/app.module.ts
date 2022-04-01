@@ -8,13 +8,15 @@ import { AppService } from '@root/app.service'
 import { AuthModule } from '@auth/auth.module'
 import { CatsModule } from '@cats/cats.module'
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
+import { CommentsModule } from './comments/comments.module'
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
 		MongooseModule.forRoot(process.env.MONGODB_URI),
 		AuthModule,
-		CatsModule
+		CatsModule,
+		CommentsModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
+import { MulterModule } from '@nestjs/platform-express'
 
 import { AuthModule } from '@auth/auth.module'
 import { CatsController } from '@cats/cats.controller'
@@ -10,6 +11,7 @@ import { CatsService } from '@cats/cats.service'
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }]),
+		MulterModule.register({ dest: './upload' }),
 		forwardRef(() => AuthModule)
 	],
 	controllers: [CatsController],

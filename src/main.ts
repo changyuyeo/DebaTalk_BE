@@ -1,13 +1,15 @@
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule, OpenAPIObject } from '@nestjs/swagger'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import * as basicAuth from 'express-basic-auth'
+import * as path from 'path'
 
 import { AppModule } from '@root/app.module'
 import { HttpExceptionFilter } from '@common/exceptions/http-exception.filter'
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule)
+	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 	const { ORIGIN, PORT, SWAGGER_USER, SWAGGER_PASSWORD } = process.env
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
@@ -20,6 +22,9 @@ async function bootstrap() {
 			users: { [SWAGGER_USER]: SWAGGER_PASSWORD }
 		})
 	)
+	app.useStaticAssets(path.join(__dirname, './common', 'uploads'), {
+		prefix: '/media'
+	})
 
 	const config = new DocumentBuilder()
 		.setTitle('C.I.C')

@@ -39,11 +39,18 @@ export class Cat extends Document {
 	@IsNotEmpty()
 	password: string
 
-	@Prop()
+	@Prop({
+		default: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png'
+	})
 	@IsString()
 	imgUrl: string
 
-	readonly readOnlyData: { id: string; email: string; name: string }
+	readonly readOnlyData: {
+		id: string
+		email: string
+		name: string
+		imgUrl: string
+	}
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat)
@@ -52,6 +59,7 @@ CatSchema.virtual('readOnlyData').get(function (this: Cat) {
 	return {
 		id: this.id,
 		email: this.email,
-		name: this.name
+		name: this.name,
+		imgUrl: this.imgUrl
 	}
 })
