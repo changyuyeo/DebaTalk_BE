@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 
 import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
@@ -24,7 +24,7 @@ export class CommentsController {
 	}
 
 	@ApiOperation({ summary: '좋아요 수 올리기' })
-	@Post(':id')
+	@Patch(':id')
 	async plusLike(@Param('id') id: string) {
 		return this.commentsService.plusLike(id)
 	}

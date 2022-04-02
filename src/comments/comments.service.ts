@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
+import { Comment } from '@comments/comments.schema'
 import { CatsRepository } from '@cats/cats.repository'
 
 @Injectable()

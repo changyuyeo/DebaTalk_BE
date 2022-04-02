@@ -41,6 +41,24 @@ export class Comment extends Document {
 	@Prop({ default: 0 })
 	@IsPositive()
 	likeCount: number
+
+	readonly readOnlyData: {
+		id: string
+		author: string
+		info: string
+		content: string
+		likeCount: number
+	}
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)
+
+CommentSchema.virtual('readOnlyData').get(function (this: Comment) {
+	return {
+		id: this.id,
+		author: this.author,
+		info: this.info,
+		content: this.content,
+		likeCount: this.likeCount
+	}
+})
