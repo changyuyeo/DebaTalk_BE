@@ -5,10 +5,6 @@ import * as mongoose from 'mongoose'
 
 import { AppController } from '@root/app.controller'
 import { AppService } from '@root/app.service'
-import { AuthModule } from '@auth/auth.module'
-import { CatsModule } from '@cats/cats.module'
-import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
-import { CommentsModule } from '@comments/comments.module'
 
 @Module({
 	imports: [
@@ -16,10 +12,7 @@ import { CommentsModule } from '@comments/comments.module'
 		MongooseModule.forRoot(process.env.MONGODB_URI, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
-		}),
-		AuthModule,
-		CatsModule,
-		CommentsModule
+		})
 	],
 	controllers: [AppController],
 	providers: [AppService]
@@ -28,7 +21,6 @@ export class AppModule implements NestModule {
 	private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false
 
 	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(LoggerMiddleware).forRoutes('*')
 		mongoose.set('debug', this.isDev)
 	}
 }

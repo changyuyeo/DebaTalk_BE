@@ -20,9 +20,9 @@
 		"paths": {
 			"@root/*": ["./src/*"],
 			"@auth/*": ["./src/auth/*"],
-			"@cats/*": ["./src/cats/*"],
 			"@comments/*": ["./src/comments/*"],
-			"@common/*": ["./src/common/*"]
+			"@common/*": ["./src/common/*"],
+			"@users/*": ["./src/users/*"]
 		}
 	}
 }
