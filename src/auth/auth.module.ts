@@ -1,11 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
 
 import { JwtStrategy } from '@auth/jwt/jwt.strategy'
 import { AuthService } from '@auth/auth.service'
-import { CatsModule } from '@cats/cats.module'
+import { UsersModule } from '@users/users.module'
 
 @Module({
 	imports: [
@@ -15,7 +15,7 @@ import { CatsModule } from '@cats/cats.module'
 			secret: process.env.JWT_SECRET,
 			signOptions: { expiresIn: '1y' }
 		}),
-		forwardRef(() => CatsModule)
+		forwardRef(() => UsersModule) //* 순환 참조 모듈
 	],
 	providers: [AuthService, JwtStrategy],
 	exports: [AuthService]

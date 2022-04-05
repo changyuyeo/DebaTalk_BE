@@ -1,7 +1,7 @@
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface'
 import * as multer from 'multer'
 import * as path from 'path'
 import * as fs from 'fs'
-import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface'
 
 const createFolder = (folder: string) => {
 	try {
@@ -30,13 +30,8 @@ const storage = (folder: string): multer.StorageEngine => {
 		filename(req, file, cb) {
 			//* 어떤 이름으로 올릴 지
 			const ext = path.extname(file.originalname)
-
-			const fileName = `${path.basename(
-				file.originalname,
-				ext
-			)}${Date.now()}${ext}`
-
-			cb(null, fileName)
+			const basename = path.basename(file.originalname, ext)
+			cb(null, `${basename}_${new Date().getTime()}${ext}`)
 		}
 	})
 }

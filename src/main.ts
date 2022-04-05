@@ -6,14 +6,21 @@ import * as basicAuth from 'express-basic-auth'
 import * as path from 'path'
 
 import { AppModule } from '@root/app.module'
-import { HttpExceptionFilter } from '@common/exceptions/http-exception.filter'
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 	const { ORIGIN, PORT, SWAGGER_USER, SWAGGER_PASSWORD } = process.env
+	//* swagger setting
+	const config = new DocumentBuilder()
+		.setTitle('자칭 전문가들의 거대한 토론장')
+		.setDescription('Ja-Jeon-Gur Forum APIs')
+		.setVersion('1.0.1')
+		.addTag('users')
+		.build()
+	const document: OpenAPIObject = SwaggerModule.createDocument(app, config)
+	SwaggerModule.setup('api', app, document)
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
-	app.useGlobalFilters(new HttpExceptionFilter())
 	app.enableCors({ origin: ORIGIN, credentials: true })
 	app.use(
 		['/api', '/api-json'],
@@ -25,14 +32,6 @@ async function bootstrap() {
 	app.useStaticAssets(path.join(__dirname, './common', 'uploads'), {
 		prefix: '/media'
 	})
-
-	const config = new DocumentBuilder()
-		.setTitle('C.I.C')
-		.setDescription('cat')
-		.setVersion('1.0.0')
-		.build()
-	const document: OpenAPIObject = SwaggerModule.createDocument(app, config)
-	SwaggerModule.setup('api', app, document)
 
 	await app.listen(PORT)
 }

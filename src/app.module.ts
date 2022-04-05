@@ -6,9 +6,8 @@ import * as mongoose from 'mongoose'
 import { AppController } from '@root/app.controller'
 import { AppService } from '@root/app.service'
 import { AuthModule } from '@auth/auth.module'
-import { CatsModule } from '@cats/cats.module'
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
-import { CommentsModule } from '@comments/comments.module'
+import { UsersModule } from '@users/users.module'
 
 @Module({
 	imports: [
@@ -18,8 +17,7 @@ import { CommentsModule } from '@comments/comments.module'
 			useUnifiedTopology: true
 		}),
 		AuthModule,
-		CatsModule,
-		CommentsModule
+		UsersModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
