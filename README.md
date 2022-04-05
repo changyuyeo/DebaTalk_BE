@@ -4,6 +4,13 @@
 
 <br />
 
+setting.json
+
+```json
+  "workbench.iconTheme": "material-icon-theme",
+  "material-icon-theme.activeIconPack": "nest",
+```
+
 node -v
 
 ```

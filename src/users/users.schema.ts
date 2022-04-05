@@ -1,13 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import * as dayjs from 'dayjs'
 import { Document } from 'mongoose'
 
-const option: SchemaFactory = {
-	timestamps: true
-}
-
-@Schema(option)
+@Schema()
 export class User extends Document {
 	@ApiProperty({
 		example: 'jebong8691',
@@ -61,6 +58,10 @@ export class User extends Document {
 	@Prop({ default: 0 })
 	point: number
 
+	@ApiProperty({ example: '2022년 4월 5일', description: '생성일자' })
+	@Prop({ default: dayjs().format('YYYY년 MM월 DD일') })
+	createDate: string
+
 	readonly readOnlyData: {
 		id: string
 		userId: string
@@ -69,6 +70,7 @@ export class User extends Document {
 		imgUrl: string
 		level: number
 		point: number
+		createDate: string
 	}
 }
 
@@ -82,6 +84,7 @@ UserSchema.virtual('readOnlyData').get(function (this: User) {
 		nickname: this.nickname,
 		imgUrl: this.imgUrl,
 		level: this.level,
-		point: this.point
+		point: this.point,
+		createDate: this.createDate
 	}
 })

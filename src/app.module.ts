@@ -7,6 +7,7 @@ import { AppController } from '@root/app.controller'
 import { AppService } from '@root/app.service'
 import { AuthModule } from '@auth/auth.module'
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
+import { PostsModule } from '@posts/posts.module'
 import { UsersModule } from '@users/users.module'
 
 @Module({
@@ -17,6 +18,7 @@ import { UsersModule } from '@users/users.module'
 			useUnifiedTopology: true
 		}),
 		AuthModule,
+		PostsModule,
 		UsersModule
 	],
 	controllers: [AppController],

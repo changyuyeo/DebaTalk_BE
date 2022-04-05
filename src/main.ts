@@ -16,6 +16,7 @@ async function bootstrap() {
 		.setDescription('Ja-Jeon-Gur Forum APIs')
 		.setVersion('1.0.1')
 		.addTag('users')
+		.addTag('posts')
 		.build()
 	const document: OpenAPIObject = SwaggerModule.createDocument(app, config)
 	SwaggerModule.setup('api', app, document)
