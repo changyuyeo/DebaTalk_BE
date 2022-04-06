@@ -2,13 +2,18 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString } from 'class-validator'
 import * as dayjs from 'dayjs'
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 
 import { Comment } from '@comments/comments.schema'
 import { Category } from '@typings/category'
 
 @Schema()
 export class Post extends Document {
+	@ApiProperty({ description: '게시글 작성자 id' })
+	@Prop({ type: Types.ObjectId, required: true, ref: 'users' })
+	@IsNotEmpty()
+	author: Types.ObjectId
+
 	@ApiProperty({ example: '자유', description: '게시글 카테고리' })
 	@Prop({ default: '자유' })
 	@IsString()
@@ -35,12 +40,12 @@ export class Post extends Document {
 	content: string
 
 	@ApiProperty({ description: '해당 게시글의 추천수' })
-	@Prop({ default: 0 })
-	liker: number
+	@Prop({ default: [] })
+	likeList: Array<string>
 
 	@ApiProperty({ description: '해당 게시글의 비추천수' })
-	@Prop({ default: 0 })
-	unliker: number
+	@Prop({ default: [] })
+	unlikeList: Array<string>
 
 	@ApiProperty({ description: '해당 게시글의 조회수' })
 	@Prop({ default: 0 })
@@ -54,19 +59,21 @@ export class Post extends Document {
 	@Prop({ default: dayjs().format('YYYY년 MM월 DD일') })
 	createDate: string
 
+	readonly comments: Comment[]
+
 	readonly readOnlyData: {
 		id: string
+		author: string
 		category: Category
 		title: string
 		content: string
-		liker: number
-		unliker: number
+		likeList: Array<string>
+		unlikeList: Array<string>
 		hits: number
 		imgUrl: string
 		createDate: string
+		comments: Comment[]
 	}
-
-	readonly comments: Comment[]
 }
 
 const _PostSchema = SchemaFactory.createForClass(Post)
@@ -74,15 +81,17 @@ const _PostSchema = SchemaFactory.createForClass(Post)
 _PostSchema.virtual('readOnlyData').get(function (this: Post) {
 	return {
 		id: this.id,
+		author: this.author,
 		category: this.category,
 		title: this.title,
 		content: this.content,
-		liker: this.liker,
-		unliker: this.unliker,
+		likeList: this.likeList,
+		unlikeList: this.unlikeList,
 		hits: this.hits,
 		imgUrl: this.imgUrl,
 		createDate: this.createDate,
-		comments: this.comments.map(comment => comment.readOnlyData)
+		comments:
+			this.comments && this.comments.map(comment => comment.readOnlyData)
 	}
 })
 

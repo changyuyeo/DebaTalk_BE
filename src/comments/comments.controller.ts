@@ -2,37 +2,22 @@ import {
 	Body,
 	Controller,
 	Delete,
-	Get,
 	Param,
 	Patch,
-	Post
+	Post,
+	UseGuards
 } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 
+import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
 import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
 import { CommentsService } from '@comments/comments.service'
+import { CurrentUser } from '@common/decorators/user.decorator'
+import { User } from '@users/users.schema'
 
 @Controller('comments')
 export class CommentsController {
 	constructor(private readonly commentsService: CommentsService) {}
-
-	@ApiOperation({
-		summary: '모든 게시물에 적힌 댓글 가져오기',
-		tags: ['comments']
-	})
-	@Get()
-	async getAllComments() {
-		return this.commentsService.getAllComments()
-	}
-
-	@ApiOperation({
-		summary: '특정 게시물에 적힌 댓글 가져오기',
-		tags: ['comments']
-	})
-	@Get(':postId')
-	async getComments(@Param('postId') id: string) {
-		return this.commentsService.getComments(id)
-	}
 
 	@ApiOperation({
 		summary: '특정 게시물에 댓글 남기기',
@@ -50,35 +35,61 @@ export class CommentsController {
 		summary: '해당 댓글의 추천수 올리기',
 		tags: ['comments']
 	})
+	@UseGuards(JwtAuthGuard)
 	@Patch('like/:commentId')
-	async addLikeNumber(@Param('commentId') id: string) {
-		return this.commentsService.UpdateLikeOrUnLike(id, 'addLike')
+	async addLikeNumber(
+		@CurrentUser() user: User,
+		@Param('commentId') id: string
+	) {
+		return this.commentsService.UpdateLikeOrUnLike(user, id, 'addLike')
 	}
 
 	@ApiOperation({
 		summary: '해당 댓글의 추천 취소',
 		tags: ['comments']
 	})
+	@UseGuards(JwtAuthGuard)
 	@Delete('like/:commentId')
-	async cancleAddLikeNumber(@Param('commentId') id: string) {
-		return this.commentsService.UpdateLikeOrUnLike(id, 'cancleLike')
+	async cancleAddLikeNumber(
+		@CurrentUser() user: User,
+		@Param('commentId') id: string
+	) {
+		return this.commentsService.UpdateLikeOrUnLike(user, id, 'cancleLike')
 	}
 
 	@ApiOperation({
 		summary: '해당 댓글의 비추천수 올리기',
 		tags: ['comments']
 	})
+	@UseGuards(JwtAuthGuard)
 	@Patch('unlike/:commentId')
-	async addUnlikeNumber(@Param('commentId') id: string) {
-		return this.commentsService.UpdateLikeOrUnLike(id, 'addUnlike')
+	async addUnlikeNumber(
+		@CurrentUser() user: User,
+		@Param('commentId') id: string
+	) {
+		return this.commentsService.UpdateLikeOrUnLike(user, id, 'addUnlike')
 	}
 
 	@ApiOperation({
 		summary: '해당 댓글의 비추천 취소',
 		tags: ['comments']
 	})
+	@UseGuards(JwtAuthGuard)
 	@Delete('unlike/:commentId')
-	async cancleAddUnLikeNumber(@Param('commentId') id: string) {
-		return this.commentsService.UpdateLikeOrUnLike(id, 'cancleUnlike')
+	async cancleAddUnLikeNumber(
+		@CurrentUser() user: User,
+		@Param('commentId') id: string
+	) {
+		return this.commentsService.UpdateLikeOrUnLike(user, id, 'cancleUnlike')
+	}
+
+	@ApiOperation({ summary: '해당 댓글 삭제', tags: ['comments'] })
+	@UseGuards(JwtAuthGuard)
+	@Delete(':commentId')
+	async deleteComment(
+		@CurrentUser() user: User,
+		@Param('commentId') id: string
+	) {
+		return this.commentsService.deleteComment(user, id)
 	}
 }

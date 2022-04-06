@@ -34,9 +34,16 @@ export class UsersRepository {
 		return user
 	}
 
-	async findByIdAndUpdateImg(id: string, fileName: string) {
+	async findByIdAndUpdateImg(
+		id: string,
+		type: 'upload' | 'remove',
+		fileName?: string
+	) {
 		const user = await this.userModel.findById(id)
-		user.imgUrl = `${process.env.SERVER_URI}/media/${fileName}`
+		user.imgUrl =
+			type === 'upload'
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'defalut'
 		const newUser = await user.save()
 		return newUser.readOnlyData
 	}

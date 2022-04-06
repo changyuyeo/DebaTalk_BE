@@ -49,6 +49,7 @@ export class UsersService {
 		const fileName = `users/${file.filename}`
 		const newUser = await this.usersRepository.findByIdAndUpdateImg(
 			user.id,
+			'upload',
 			fileName
 		)
 		return newUser
@@ -58,6 +59,14 @@ export class UsersService {
 		const allUsers = await this.usersRepository.findAllUsers()
 		const readOnlyUsers = allUsers.map(user => user.readOnlyData)
 		return readOnlyUsers
+	}
+
+	async deleteImg(user: User) {
+		const newUser = await this.usersRepository.findByIdAndUpdateImg(
+			user.id,
+			'remove'
+		)
+		return newUser
 	}
 
 	async deleteUser(user: User, targetId: string) {

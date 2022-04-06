@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
+import { Comment, CommentSchema } from '@comments/comments.schema'
 import { PostsController } from '@posts/posts.controller'
 import { PostsRepository } from '@posts/posts.repository'
 import { Post, PostSchema } from '@posts/posts.schema'
 import { PostsService } from '@posts/posts.service'
-import { Comment, CommentSchema } from '@root/comments/comments.schema'
 
 @Module({
 	imports: [

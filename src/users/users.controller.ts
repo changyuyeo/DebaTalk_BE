@@ -17,12 +17,12 @@ import { LoginResponseDto } from '@auth/dtos/login.dto'
 import { LoginRequestDto } from '@auth/dtos/login.request.dto'
 import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
 import { AuthService } from '@auth/auth.service'
-import { UserRequestDto } from '@users/dtos/users.request.dto'
-import { ReadOnlyUserDto, ReadOnlyUserIdDto } from '@users/dtos/users.dto'
-import { User } from '@users/users.schema'
-import { UsersService } from '@users/users.service'
 import { CurrentUser } from '@common/decorators/user.decorator'
 import { multerOptions } from '@common/utils/multer.options'
+import { ReadOnlyUserDto, ReadOnlyUserIdDto } from '@users/dtos/users.dto'
+import { UserRequestDto } from '@users/dtos/users.request.dto'
+import { User } from '@users/users.schema'
+import { UsersService } from '@users/users.service'
 
 @Controller('users')
 export class UsersController {
@@ -74,12 +74,22 @@ export class UsersController {
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseInterceptors(FileInterceptor('image', multerOptions('users')))
 	@UseGuards(JwtAuthGuard)
-	@Patch('upload')
+	@Patch('image')
 	uploadProfileImg(
 		@UploadedFile() file: Express.Multer.File,
 		@CurrentUser() user: User
 	) {
 		return this.usersService.uploadImg(user, file)
+	}
+
+	@ApiOperation({ summary: '프로필 사진 삭제', tags: ['users'] })
+	@ApiResponse({ status: 200, description: 'success' })
+	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
+	@ApiResponse({ status: 500, description: 'Server Error...' })
+	@UseGuards(JwtAuthGuard)
+	@Delete('image')
+	deleteProfileImg(@CurrentUser() user: User) {
+		return this.usersService.deleteImg(user)
 	}
 
 	@ApiOperation({ summary: '회원탈퇴', tags: ['users'] })
@@ -88,7 +98,7 @@ export class UsersController {
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@Delete(':id')
 	@UseGuards(JwtAuthGuard)
-	deleteUser(@CurrentUser() user, @Param('id') targetId: string) {
+	deleteUser(@CurrentUser() user: User, @Param('id') targetId: string) {
 		return this.usersService.deleteUser(user, targetId)
 	}
 }

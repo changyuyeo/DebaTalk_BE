@@ -21,12 +21,25 @@ export class PostsRepository {
 	}
 
 	async findPostById(id: string | Types.ObjectId) {
-		const Post = await this.postModel.findById(id)
-		return Post
+		const post = await this.postModel.findById(id)
+		return post
 	}
 
-	async createPost(post: PostRequestDto): Promise<Post> {
-		const newPost = await this.postModel.create(post)
+	async createPost(
+		id: string | Types.ObjectId,
+		post: PostRequestDto
+	): Promise<Post> {
+		console.log(id)
+
+		const newPost = await this.postModel.create({
+			author: id,
+			...post
+		})
 		return newPost
+	}
+
+	async findPostByIdAndDelete(id: string | Types.ObjectId) {
+		const post = await this.postModel.findByIdAndRemove(id)
+		return post
 	}
 }

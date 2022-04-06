@@ -26,15 +26,15 @@ export class Comment extends Document {
 	@IsString()
 	content: string
 
-	@ApiProperty({ example: 0, description: '댓글 추천수' })
-	@Prop({ default: 0 })
+	@ApiProperty({ example: [], description: '댓글 추천수' })
+	@Prop({ default: [] })
 	@IsPositive()
-	likeCount: number
+	likeList: Array<string>
 
-	@ApiProperty({ example: 0, description: '댓글 비추천수' })
-	@Prop({ default: 0 })
+	@ApiProperty({ example: [], description: '댓글 비추천수' })
+	@Prop({ default: [] })
 	@IsPositive()
-	unlikeCount: number
+	unlikeList: Array<string>
 
 	@ApiProperty({ example: '2022-04-05', description: '댓글 생성일자' })
 	@Prop({ default: dayjs().format('YYYY-MM-DD') })
@@ -44,8 +44,8 @@ export class Comment extends Document {
 		id: string
 		author: string
 		content: string
-		likeCount: number
-		unlikeCount: number
+		likeList: Array<string>
+		unlikeList: Array<string>
 		createDate: string
 	}
 }
@@ -57,8 +57,8 @@ CommentSchema.virtual('readOnlyData').get(function (this: Comment) {
 		id: this.id,
 		author: this.author,
 		content: this.content,
-		likeCount: this.likeCount,
-		unlikeCount: this.unlikeCount,
+		likeList: this.likeList,
+		unlikeList: this.unlikeList,
 		createDate: this.createDate
 	}
 })

@@ -5,7 +5,7 @@ import { User } from '@users/users.schema'
 export class ReadOnlyUserIdDto {
 	@ApiProperty({
 		example: '624bc1796175813107b7ef2f',
-		description: '삭제된 아이디'
+		description: '해당유저 아이디'
 	})
 	id: string
 }
