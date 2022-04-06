@@ -59,4 +59,12 @@ export class UsersService {
 		const readOnlyUsers = allUsers.map(user => user.readOnlyData)
 		return readOnlyUsers
 	}
+
+	async deleteUser(user: User, targetId: string) {
+		const userId = await this.usersRepository.findByIdAndDeleteUser(
+			user,
+			targetId
+		)
+		return userId
+	}
 }

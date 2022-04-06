@@ -4,7 +4,7 @@
 
 <br />
 
-setting.json
+settings.json
 
 ```json
   "workbench.iconTheme": "material-icon-theme",

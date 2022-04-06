@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model, Types } from 'mongoose'
+import { model, Model, Types } from 'mongoose'
 
+import { CommentSchema } from '@comments/comments.schema'
 import { PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { Post } from '@posts/posts.schema'
 
@@ -11,8 +12,11 @@ export class PostsRepository {
 		@InjectModel(Post.name) private readonly postModel: Model<Post>
 	) {}
 
-	async findAllUsers() {
-		const Posts = await this.postModel.find()
+	async getAllPosts() {
+		const CommentsModel = model('comments', CommentSchema)
+		const Posts = await this.postModel
+			.find()
+			.populate('comments', CommentsModel)
 		return Posts
 	}
 

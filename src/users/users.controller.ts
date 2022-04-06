@@ -1,7 +1,10 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
+	Param,
+	Patch,
 	Post,
 	UploadedFile,
 	UseGuards,
@@ -15,7 +18,7 @@ import { LoginRequestDto } from '@auth/dtos/login.request.dto'
 import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
 import { AuthService } from '@auth/auth.service'
 import { UserRequestDto } from '@users/dtos/users.request.dto'
-import { ReadOnlyUserDto } from '@users/dtos/users.dto'
+import { ReadOnlyUserDto, ReadOnlyUserIdDto } from '@users/dtos/users.dto'
 import { User } from '@users/users.schema'
 import { UsersService } from '@users/users.service'
 import { CurrentUser } from '@common/decorators/user.decorator'
@@ -71,11 +74,21 @@ export class UsersController {
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseInterceptors(FileInterceptor('image', multerOptions('users')))
 	@UseGuards(JwtAuthGuard)
-	@Post('upload')
+	@Patch('upload')
 	uploadProfileImg(
 		@UploadedFile() file: Express.Multer.File,
 		@CurrentUser() user: User
 	) {
 		return this.usersService.uploadImg(user, file)
+	}
+
+	@ApiOperation({ summary: '회원탈퇴', tags: ['users'] })
+	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
+	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
+	@ApiResponse({ status: 500, description: 'Server Error...' })
+	@Delete(':id')
+	@UseGuards(JwtAuthGuard)
+	deleteUser(@CurrentUser() user, @Param('id') targetId: string) {
+		return this.usersService.deleteUser(user, targetId)
 	}
 }

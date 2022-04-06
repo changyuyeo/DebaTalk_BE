@@ -2,6 +2,14 @@ import { ApiProperty, PickType } from '@nestjs/swagger'
 
 import { User } from '@users/users.schema'
 
+export class ReadOnlyUserIdDto {
+	@ApiProperty({
+		example: '624bc1796175813107b7ef2f',
+		description: '삭제된 아이디'
+	})
+	id: string
+}
+
 export class ReadOnlyUserDto extends PickType(User, [
 	'userId',
 	'email',

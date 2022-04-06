@@ -8,7 +8,7 @@ export class PostsService {
 	constructor(private readonly postsRepository: PostsRepository) {}
 
 	async getAllPosts() {
-		const posts = await this.postsRepository.findAllUsers()
+		const posts = await this.postsRepository.getAllPosts()
 		const readOnlyPosts = posts.map(post => post.readOnlyData)
 		return readOnlyPosts
 	}

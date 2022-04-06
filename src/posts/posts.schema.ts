@@ -4,6 +4,7 @@ import { IsNotEmpty, IsString } from 'class-validator'
 import * as dayjs from 'dayjs'
 import { Document } from 'mongoose'
 
+import { Comment } from '@comments/comments.schema'
 import { Category } from '@typings/category'
 
 @Schema()
@@ -64,11 +65,13 @@ export class Post extends Document {
 		imgUrl: string
 		createDate: string
 	}
+
+	readonly comments: Comment[]
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post)
+const _PostSchema = SchemaFactory.createForClass(Post)
 
-PostSchema.virtual('readOnlyData').get(function (this: Post) {
+_PostSchema.virtual('readOnlyData').get(function (this: Post) {
 	return {
 		id: this.id,
 		category: this.category,
@@ -78,6 +81,18 @@ PostSchema.virtual('readOnlyData').get(function (this: Post) {
 		unliker: this.unliker,
 		hits: this.hits,
 		imgUrl: this.imgUrl,
-		createDate: this.createDate
+		createDate: this.createDate,
+		comments: this.comments.map(comment => comment.readOnlyData)
 	}
 })
+
+_PostSchema.virtual('comments', {
+	ref: 'comments',
+	localField: '_id',
+	foreignField: 'info' //* 외래필드
+})
+
+_PostSchema.set('toObject', { virtuals: true })
+_PostSchema.set('toJSON', { virtuals: true })
+
+export const PostSchema = _PostSchema

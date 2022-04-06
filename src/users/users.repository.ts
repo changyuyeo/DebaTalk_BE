@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, Types } from 'mongoose'
 
@@ -43,5 +43,14 @@ export class UsersRepository {
 
 	async create(user: UserRequestDto): Promise<User> {
 		return await this.userModel.create(user)
+	}
+
+	async findByIdAndDeleteUser(user: User, id: string) {
+		if (user.id === id) {
+			const deleteUser = await this.userModel.findByIdAndDelete(id)
+			return deleteUser.id
+		} else {
+			throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
+		}
 	}
 }
