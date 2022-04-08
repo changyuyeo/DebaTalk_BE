@@ -59,8 +59,33 @@ export class PostsService {
 		}
 	}
 
-	async createPost(user: User, body: PostRequestDto) {
-		const newPost = await this.postsRepository.createPost(user.id, body)
+	async createPost(
+		user: User,
+		body: PostRequestDto,
+		file?: Express.Multer.File
+	) {
+		const fileName = file ? `posts/${file.filename}` : null
+		const newPost = await this.postsRepository.createPost(
+			user.id,
+			body,
+			fileName
+		)
+		return newPost.readOnlyData
+	}
+
+	async updatePost(
+		postId: string,
+		user: User,
+		body: PostRequestDto,
+		file?: Express.Multer.File
+	) {
+		const fileName = file ? `posts/${file.filename}` : null
+		const newPost = await this.postsRepository.updatePost(
+			postId,
+			user.id,
+			body,
+			fileName
+		)
 		return newPost.readOnlyData
 	}
 

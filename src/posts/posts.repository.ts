@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+	HttpException,
+	Injectable,
+	UnauthorizedException
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { model, Model, Types } from 'mongoose'
 
@@ -27,15 +31,38 @@ export class PostsRepository {
 
 	async createPost(
 		id: string | Types.ObjectId,
-		post: PostRequestDto
+		post: PostRequestDto,
+		fileName: string | null
 	): Promise<Post> {
-		console.log(id)
-
 		const newPost = await this.postModel.create({
 			author: id,
+			imgUrl: fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default',
 			...post
 		})
 		return newPost
+	}
+
+	async updatePost(
+		postId: string | Types.ObjectId,
+		userId: string | Types.ObjectId,
+		body: PostRequestDto,
+		fileName: string | null
+	): Promise<Post> {
+		const post = await this.postModel.findById(postId)
+		if (!post) throw new HttpException('해당 게시물을 찾을 수 없습니다.', 400)
+		const { category, title, content } = body
+		if (post.author === userId) {
+			post.category = category
+			post.title = title
+			post.content = content
+			post.imgUrl = fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default'
+			const newPost = await post.save()
+			return newPost
+		} else throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
 	}
 
 	async findPostByIdAndDelete(id: string | Types.ObjectId) {

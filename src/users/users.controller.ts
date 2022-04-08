@@ -72,8 +72,8 @@ export class UsersController {
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserDto })
 	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
 	@ApiResponse({ status: 500, description: 'Server Error...' })
-	@UseInterceptors(FileInterceptor('image', multerOptions('users')))
 	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('image', multerOptions('users')))
 	@Patch('image')
 	uploadProfileImg(
 		@UploadedFile() file: Express.Multer.File,

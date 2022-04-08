@@ -6,7 +6,9 @@ import {
 	Param,
 	Patch,
 	Post,
-	UseGuards
+	UploadedFile,
+	UseGuards,
+	UseInterceptors
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 
@@ -17,6 +19,8 @@ import { PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { PostsService } from '@posts/posts.service'
 import { ReadOnlyUserIdDto } from '@users/dtos/users.dto'
 import { User } from '@users/users.schema'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { multerOptions } from '@root/common/utils/multer.options'
 
 @Controller('posts')
 export class PostsController {
@@ -45,9 +49,30 @@ export class PostsController {
 	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('image', multerOptions('posts')))
 	@Post()
-	async createPost(@CurrentUser() user: User, @Body() body: PostRequestDto) {
-		return await this.postsService.createPost(user, body)
+	async createPost(
+		@UploadedFile() file: Express.Multer.File,
+		@CurrentUser() user: User,
+		@Body() body: PostRequestDto
+	) {
+		return await this.postsService.createPost(user, body, file)
+	}
+
+	@ApiOperation({ summary: '해당 게시글 수정', tags: ['posts'] })
+	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyPostDto })
+	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
+	@ApiResponse({ status: 500, description: 'Server Error...' })
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('image', multerOptions('posts')))
+	@Patch(':postId')
+	async updatePost(
+		@UploadedFile() file: Express.Multer.File,
+		@CurrentUser() user: User,
+		@Body() body: PostRequestDto,
+		@Param('postId') postId: string
+	) {
+		return await this.postsService.updatePost(postId, user, body, file)
 	}
 
 	@ApiOperation({ summary: '해당 게시글의 추천수 올리기', tags: ['posts'] })
