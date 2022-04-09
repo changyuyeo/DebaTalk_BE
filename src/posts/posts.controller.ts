@@ -6,21 +6,22 @@ import {
 	Param,
 	Patch,
 	Post,
+	Query,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
 import { CurrentUser } from '@common/decorators/user.decorator'
+import { multerOptions } from '@common/utils/multer.options'
 import { ReadOnlyPostDto, ReadOnlyPostIdDto } from '@posts/dtos/posts.dto'
-import { PostRequestDto } from '@posts/dtos/posts.request.dto'
+import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { PostsService } from '@posts/posts.service'
 import { ReadOnlyUserIdDto } from '@users/dtos/users.dto'
 import { User } from '@users/users.schema'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { multerOptions } from '@root/common/utils/multer.options'
 
 @Controller('posts')
 export class PostsController {
@@ -31,8 +32,8 @@ export class PostsController {
 	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@Get('all')
-	async getAllPosts() {
-		return await this.postsService.getAllPosts()
+	async getAllPosts(@Query() query: PostQueryDto) {
+		return await this.postsService.getAllPosts(query)
 	}
 
 	@ApiOperation({ summary: '특정 게시물 가져오기', tags: ['posts'] })

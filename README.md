@@ -17,9 +17,9 @@ post
 - [ ] 조회수, 추천수, 최신수 정렬
 - [ ] post 검색 (제목, 작성자)
 
-- [ ] post img upload api
-- [ ] post img update api
-- [ ] post update api
+- [x] post img upload api
+- [x] post img update api
+- [x] post update api
 
 ---
 

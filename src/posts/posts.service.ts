@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common'
 
-import { PostRequestDto } from '@posts/dtos/posts.request.dto'
+import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { PostsRepository } from '@posts/posts.repository'
 import { User } from '@users/users.schema'
 
@@ -8,8 +8,8 @@ import { User } from '@users/users.schema'
 export class PostsService {
 	constructor(private readonly postsRepository: PostsRepository) {}
 
-	async getAllPosts() {
-		const posts = await this.postsRepository.getAllPosts()
+	async getAllPosts(data: PostQueryDto) {
+		const posts = await this.postsRepository.getAllPosts(data)
 		const readOnlyPosts = posts.map(post => post.readOnlyData)
 		return readOnlyPosts
 	}

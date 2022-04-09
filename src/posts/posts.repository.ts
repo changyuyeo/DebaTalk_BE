@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { model, Model, Types } from 'mongoose'
 
 import { CommentSchema } from '@comments/comments.schema'
-import { PostRequestDto } from '@posts/dtos/posts.request.dto'
+import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { Post } from '@posts/posts.schema'
 
 @Injectable()
@@ -16,11 +16,13 @@ export class PostsRepository {
 		@InjectModel(Post.name) private readonly postModel: Model<Post>
 	) {}
 
-	async getAllPosts() {
+	async getAllPosts(data: PostQueryDto) {
+		const { limit, skip } = data
 		const CommentsModel = model('comments', CommentSchema)
 		const Posts = await this.postModel
 			.find()
 			.populate('comments', CommentsModel)
+			.sort({ hits: -1 })
 		return Posts
 	}
 
