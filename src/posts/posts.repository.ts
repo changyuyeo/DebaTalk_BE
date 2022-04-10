@@ -17,7 +17,9 @@ export class PostsRepository {
 	) {}
 
 	async getAllPosts(data: PostQueryDto) {
+		//* 페이지네이션 구현 필요!!
 		const { limit, skip } = data
+		//* 정렬 (조회수, 추천수, 최신순) 구현
 		const CommentsModel = model('comments', CommentSchema)
 		const Posts = await this.postModel
 			.find()
