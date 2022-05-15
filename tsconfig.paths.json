@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@comments/*": ["./src/comments/*"],
+			"@common/*": ["./src/common/*"],
+			"@posts/*": ["./src/posts/*"],
+			"@typings/*": ["./src/typings/*"],
+			"@users/*": ["./src/users/*"],
+			"@src/*": ["./src/*"]
+		}
+	}
+}

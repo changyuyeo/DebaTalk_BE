@@ -5,11 +5,12 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import * as basicAuth from 'express-basic-auth'
 import * as path from 'path'
 
-import { AppModule } from '@root/app.module'
+import { AppModule } from '@src/app.module'
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 	const { ORIGIN, PORT, SWAGGER_USER, SWAGGER_PASSWORD } = process.env
+
 	//* swagger setting
 	const config = new DocumentBuilder()
 		.setTitle('자칭 전문가들의 거대한 토론장')

@@ -14,7 +14,7 @@ import {
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 
-import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
+import { JwtAuthGuard } from '@src/users/jwt/jwt.guard'
 import { CurrentUser } from '@common/decorators/user.decorator'
 import { multerOptions } from '@common/utils/multer.options'
 import { ReadOnlyPostDto, ReadOnlyPostIdDto } from '@posts/dtos/posts.dto'

@@ -13,23 +13,19 @@ import {
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 
-import { LoginResponseDto } from '@auth/dtos/login.dto'
-import { LoginRequestDto } from '@auth/dtos/login.request.dto'
-import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
-import { AuthService } from '@auth/auth.service'
+import { LoginResponseDto } from '@src/users/dtos/login.dto'
+import { JwtAuthGuard } from '@src/users/jwt/jwt.guard'
 import { CurrentUser } from '@common/decorators/user.decorator'
 import { multerOptions } from '@common/utils/multer.options'
 import { ReadOnlyUserDto, ReadOnlyUserIdDto } from '@users/dtos/users.dto'
 import { UserRequestDto } from '@users/dtos/users.request.dto'
+import { LoginRequestDto } from '@users/dtos/login.request.dto'
 import { User } from '@users/users.schema'
 import { UsersService } from '@users/users.service'
 
 @Controller('users')
 export class UsersController {
-	constructor(
-		private readonly authService: AuthService,
-		private readonly usersService: UsersService
-	) {}
+	constructor(private readonly usersService: UsersService) {}
 
 	@ApiOperation({ summary: '유저정보 가져오기', tags: ['users'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserDto })
@@ -65,7 +61,7 @@ export class UsersController {
 	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@Post('login')
 	logIn(@Body() body: LoginRequestDto) {
-		return this.authService.jwtLogin(body)
+		return this.usersService.jwtLogin(body)
 	}
 
 	@ApiOperation({ summary: '프로필 사진 업로드 및 업데이트', tags: ['users'] })

@@ -1,5 +1,4 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-
 import { Post } from '@posts/posts.schema'
 
 export class ReadOnlyPostIdDto {

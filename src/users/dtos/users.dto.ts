@@ -1,5 +1,4 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-
 import { User } from '@users/users.schema'
 
 export class ReadOnlyUserIdDto {

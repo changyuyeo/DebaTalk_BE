@@ -3,9 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { ConfigModule } from '@nestjs/config'
 import * as mongoose from 'mongoose'
 
-import { AppController } from '@root/app.controller'
-import { AppService } from '@root/app.service'
-import { AuthModule } from '@auth/auth.module'
+import { AppController } from '@src/app.controller'
+import { AppService } from '@src/app.service'
 import { CommentsModule } from '@comments/comments.module'
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
 import { PostsModule } from '@posts/posts.module'
@@ -18,7 +17,6 @@ import { UsersModule } from '@users/users.module'
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		}),
-		AuthModule,
 		CommentsModule,
 		PostsModule,
 		UsersModule

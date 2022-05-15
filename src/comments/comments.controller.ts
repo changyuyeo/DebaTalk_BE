@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 
-import { JwtAuthGuard } from '@auth/jwt/jwt.guard'
+import { JwtAuthGuard } from '@src/users/jwt/jwt.guard'
 import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
 import { CommentsService } from '@comments/comments.service'
 import { CurrentUser } from '@common/decorators/user.decorator'
