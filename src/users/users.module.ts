@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt'
 
 import { JwtStrategy } from '@users/jwt/jwt.strategy'
 import { UsersController } from '@users/users.controller'
-import { UsersRepository } from '@users/users.repository'
 import { User, UserSchema } from '@users/users.schema'
 import { UsersService } from '@users/users.service'
 
@@ -21,7 +20,7 @@ import { UsersService } from '@users/users.service'
 		})
 	],
 	controllers: [UsersController],
-	providers: [UsersService, UsersRepository, JwtStrategy],
-	exports: [UsersService, UsersRepository]
+	providers: [UsersService, JwtStrategy],
+	exports: [UsersService]
 })
 export class UsersModule {}

@@ -1,23 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+import { Model } from 'mongoose'
 
 import { UserRequestDto } from '@users/dtos/users.request.dto'
 import { LoginRequestDto } from '@users/dtos/login.request.dto'
-import { UsersRepository } from '@users/users.repository'
 import { User } from '@users/users.schema'
 
 @Injectable()
 export class UsersService {
 	constructor(
-		private readonly usersRepository: UsersRepository,
+		@InjectModel(User.name) private readonly userModel: Model<User>,
 		private jwtService: JwtService
 	) {}
 
 	//* 모든 유저 조회 service
 	async getAllUsers() {
-		const allUsers = await this.usersRepository.findAllUsers()
+		const allUsers = await this.userModel.find()
 		const readOnlyUsers = allUsers.map(user => user.readOnlyData)
+
 		return readOnlyUsers
 	}
 
@@ -25,9 +27,9 @@ export class UsersService {
 	async signUp(body: UserRequestDto) {
 		const { userId, email, nickname, password } = body
 		const isUserExist = await Promise.all([
-			this.usersRepository.existsUser({ userId }),
-			this.usersRepository.existsUser({ email }),
-			this.usersRepository.existsUser({ nickname })
+			this.userModel.exists({ userId }),
+			this.userModel.exists({ email }),
+			this.userModel.exists({ nickname })
 		])
 		const userValidNumber = isUserExist.indexOf(true)
 
@@ -48,7 +50,7 @@ export class UsersService {
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10)
-		const newUser = await this.usersRepository.create({
+		const newUser = await this.userModel.create({
 			userId,
 			email,
 			nickname,
@@ -66,7 +68,7 @@ export class UsersService {
 		}
 
 		//* 1. 해당 user 있는지 확인
-		const user = await this.usersRepository.findUserByUserId(userId)
+		const user = await this.userModel.findOne({ userId })
 		if (!user) loginValidFunc()
 
 		//* 2. password 일치확인
@@ -82,30 +84,32 @@ export class UsersService {
 
 	//* 회원탈퇴 service
 	async deleteUser(user: User, targetId: string) {
-		const userId = await this.usersRepository.findByIdAndDeleteUser(
-			user,
-			targetId
-		)
-		return userId
+		if (user.id === targetId) {
+			const deleteUser = await this.userModel.findByIdAndDelete(targetId)
+			return deleteUser.id
+		} else {
+			throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
+		}
 	}
 
 	//* 프로필 사진 업로드 service
 	async uploadImg(user: User, file: Express.Multer.File) {
 		const fileName = `users/${file.filename}`
-		const newUser = await this.usersRepository.findByIdAndUpdateImg(
-			user.id,
-			'upload',
-			fileName
-		)
-		return newUser
+		const currentUser = await this.userModel.findById(user.id)
+
+		currentUser.imgUrl = `${process.env.SERVER_URI}/media/${fileName}`
+		const newUser = await currentUser.save()
+
+		return newUser.readOnlyData
 	}
 
 	//* 프로필 사진 삭제 service
 	async deleteImg(user: User) {
-		const newUser = await this.usersRepository.findByIdAndUpdateImg(
-			user.id,
-			'remove'
-		)
-		return newUser
+		const currentUser = await this.userModel.findById(user.id)
+
+		currentUser.imgUrl = 'defalut'
+		const newUser = await user.save()
+
+		return newUser.readOnlyData
 	}
 }

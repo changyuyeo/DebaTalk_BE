@@ -6,14 +6,13 @@ import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
 import { Comment } from '@comments/comments.schema'
 import { PostsRepository } from '@posts/posts.repository'
 import { User } from '@users/users.schema'
-import { UsersRepository } from '@users/users.repository'
 
 @Injectable()
 export class CommentsService {
 	constructor(
 		@InjectModel(Comment.name) private readonly commentModel: Model<Comment>,
-		private readonly postsRepository: PostsRepository,
-		private readonly usersRepository: UsersRepository
+		@InjectModel(User.name) private readonly userModel: Model<User>,
+		private readonly postsRepository: PostsRepository
 	) {}
 
 	//* 댓글 작성 service
@@ -23,14 +22,16 @@ export class CommentsService {
 			console.log(targetPost)
 
 			const { author, content } = comments
-			const validtedAuthor =
-				await this.usersRepository.findUserByIdWithoutPassword(author)
+			const validtedAuthor = await this.userModel
+				.findById(author)
+				.select('-password')
 			const newComment = new this.commentModel({
 				author: validtedAuthor._id,
 				content,
 				info: targetPost._id
 			})
 			const readOnlyComment = await newComment.save()
+
 			return readOnlyComment.readOnlyData
 		} catch (error) {
 			throw new BadRequestException(error.message)
