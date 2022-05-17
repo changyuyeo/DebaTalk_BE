@@ -1,30 +1,49 @@
-import { HttpException, Injectable } from '@nestjs/common'
+import {
+	HttpException,
+	Injectable,
+	UnauthorizedException
+} from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { model, Model } from 'mongoose'
 
+import { CommentSchema } from '@comments/comments.schema'
 import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
-import { PostsRepository } from '@posts/posts.repository'
+import { Post } from '@posts/posts.schema'
 import { User } from '@users/users.schema'
 
 @Injectable()
 export class PostsService {
-	constructor(private readonly postsRepository: PostsRepository) {}
+	constructor(
+		@InjectModel(Post.name) private readonly postModel: Model<Post>
+	) {}
 
+	//* 모든 게시물 조회 service
 	async getAllPosts(data: PostQueryDto) {
-		const posts = await this.postsRepository.getAllPosts(data)
+		const { limit, skip } = data
+		//* 정렬 (조회수, 추천수, 최신순) 구현
+		const CommentsModel = model('comments', CommentSchema)
+		const posts = await this.postModel
+			.find()
+			.populate('comments', CommentsModel)
+			.sort({ hits: -1 })
+
 		const readOnlyPosts = posts.map(post => post.readOnlyData)
 		return readOnlyPosts
 	}
 
+	//* 특정 게시물 조회 service
 	async getOnePost(id: string) {
-		const post = await this.postsRepository.findPostById(id)
+		const post = await this.postModel.findByIdAndRemove(id)
 		return post.readOnlyData
 	}
 
+	//* 게시물 좋아요 or 싫어요 service
 	async UpdateLikeOrUnLike(
 		user: User,
 		id: string,
 		type: 'addLike' | 'cancleLike' | 'addUnlike' | 'cancleUnlike'
 	) {
-		const post = await this.postsRepository.findPostById(id)
+		const post = await this.postModel.findByIdAndRemove(id)
 		const findIndex = (items: string[]) => items.indexOf(user.id)
 
 		switch (type) {
@@ -59,20 +78,25 @@ export class PostsService {
 		}
 	}
 
+	//* 게시물 생성 service
 	async createPost(
 		user: User,
 		body: PostRequestDto,
 		file?: Express.Multer.File
 	) {
 		const fileName = file ? `posts/${file.filename}` : null
-		const newPost = await this.postsRepository.createPost(
-			user.id,
-			body,
-			fileName
-		)
+		const newPost = await this.postModel.create({
+			author: user.id,
+			imgUrl: fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default',
+			...body
+		})
+
 		return newPost.readOnlyData
 	}
 
+	//* 게시물 수정 service
 	async updatePost(
 		postId: string,
 		user: User,
@@ -80,17 +104,26 @@ export class PostsService {
 		file?: Express.Multer.File
 	) {
 		const fileName = file ? `posts/${file.filename}` : null
-		const newPost = await this.postsRepository.updatePost(
-			postId,
-			user.id,
-			body,
-			fileName
-		)
-		return newPost.readOnlyData
+		const post = await this.postModel.findById(postId)
+
+		if (!post) throw new HttpException('해당 게시물을 찾을 수 없습니다.', 400)
+		const { category, title, content } = body
+
+		if (post.author === user.id) {
+			post.category = category
+			post.title = title
+			post.content = content
+			post.imgUrl = fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default'
+
+			const newPost = await post.save()
+			return newPost
+		} else throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
 	}
 
 	async deletePost(user: User, id: string) {
-		const post = await this.postsRepository.findPostById(id)
+		const post = await this.postModel.findById(id)
 		if (!post) throw new HttpException('해당 게시물이 없습니다.', 400)
 		if (post.author === user.id) {
 			await post.deleteOne()
