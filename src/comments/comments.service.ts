@@ -4,22 +4,21 @@ import { Model } from 'mongoose'
 
 import { CommentsCreateDto } from '@comments/dtos/comments.create.dto'
 import { Comment } from '@comments/comments.schema'
-import { PostsRepository } from '@posts/posts.repository'
+import { Post } from '@posts/posts.schema'
 import { User } from '@users/users.schema'
 
 @Injectable()
 export class CommentsService {
 	constructor(
 		@InjectModel(Comment.name) private readonly commentModel: Model<Comment>,
-		@InjectModel(User.name) private readonly userModel: Model<User>,
-		private readonly postsRepository: PostsRepository
+		@InjectModel(Post.name) private readonly postModel: Model<Post>,
+		@InjectModel(User.name) private readonly userModel: Model<User>
 	) {}
 
 	//* 댓글 작성 service
 	async createComment(id: string, comments: CommentsCreateDto) {
 		try {
-			const targetPost = await this.postsRepository.findPostById(id)
-			console.log(targetPost)
+			const targetPost = await this.postModel.findById(id)
 
 			const { author, content } = comments
 			const validtedAuthor = await this.userModel
