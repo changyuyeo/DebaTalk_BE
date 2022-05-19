@@ -108,7 +108,7 @@ export class UsersService {
 		const currentUser = await this.userModel.findById(user.id)
 
 		currentUser.imgUrl = 'defalut'
-		const newUser = await user.save()
+		const newUser = await currentUser.save()
 
 		return newUser.readOnlyData
 	}

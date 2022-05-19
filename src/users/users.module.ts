@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { PassportModule } from '@nestjs/passport'
 import { MulterModule } from '@nestjs/platform-express'
@@ -11,6 +12,7 @@ import { UsersService } from '@users/users.service'
 
 @Module({
 	imports: [
+		ConfigModule.forRoot(),
 		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 		MulterModule.register({ dest: './upload' }),
 		PassportModule.register({ defaultStrategy: 'jwt', session: false }),
