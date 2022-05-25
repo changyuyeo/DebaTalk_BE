@@ -13,9 +13,9 @@ async function bootstrap() {
 
 	//* swagger setting
 	const config = new DocumentBuilder()
-		.setTitle('자칭 전문가들의 거대한 토론장')
-		.setDescription('Ja-Jeon-Gur Forum APIs')
-		.setVersion('1.0.1')
+		.setTitle('디베이톡 API 문서')
+		.setDescription('DebaTalk Forum APIs')
+		.setVersion('1.0.2')
 		.addTag('users')
 		.addTag('posts')
 		.addTag('comments')

@@ -27,28 +27,25 @@ import { User } from '@users/users.schema'
 export class PostsController {
 	constructor(private readonly postsService: PostsService) {}
 
+	//* 모든 게시물 조회 API
 	@ApiOperation({ summary: '모든 게시물 가져오기', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: [ReadOnlyPostDto] })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@Get('all')
 	async getAllPosts(@Query() query: PostQueryDto) {
 		return await this.postsService.getAllPosts(query)
 	}
 
+	//* 특정 게시물 조회 API
 	@ApiOperation({ summary: '특정 게시물 가져오기', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyPostDto })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@Get(':id')
 	async getOnePost(@Param('id') postId: string) {
 		return await this.postsService.getOnePost(postId)
 	}
 
+	//* 게시물 생성 API
 	@ApiOperation({ summary: '새 게시글 작성', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyPostDto })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('image', multerOptions('posts')))
 	@Post()
@@ -60,10 +57,9 @@ export class PostsController {
 		return await this.postsService.createPost(user, body, file)
 	}
 
+	//* 게시물 수정 API
 	@ApiOperation({ summary: '해당 게시글 수정', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyPostDto })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('image', multerOptions('posts')))
 	@Patch(':postId')
@@ -76,22 +72,26 @@ export class PostsController {
 		return await this.postsService.updatePost(postId, user, body, file)
 	}
 
+	//* 게시물 조회수 갱신 API
+	@ApiOperation({ summary: '해당 게시글의 조회수 올리기', tags: ['posts'] })
+	@UseGuards(JwtAuthGuard)
+	@Patch('hits/:postId')
+	async incViewCount(@Param('postId') postId: string) {
+		return await this.postsService.incViewCount(postId)
+	}
+
+	//* 게시물 추천 API
 	@ApiOperation({ summary: '해당 게시글의 추천수 올리기', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
-	@ApiResponse({ status: 400, description: 'Bad Request...' })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@Patch('like/:postId')
 	async addLikeNumber(@CurrentUser() user: User, @Param('postId') id: string) {
 		return this.postsService.UpdateLikeOrUnLike(user, id, 'addLike')
 	}
 
+	//* 게시물 추천 취소 API
 	@ApiOperation({ summary: '해당 게시글의 추천 취소', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
-	@ApiResponse({ status: 400, description: 'Bad Request...' })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@Delete('like/:postId')
 	async cancleAddLikeNumber(
@@ -101,11 +101,9 @@ export class PostsController {
 		return this.postsService.UpdateLikeOrUnLike(user, id, 'cancleLike')
 	}
 
+	//* 게시물 비추천 API
 	@ApiOperation({ summary: '해당 게시글의 비추천수 올리기', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
-	@ApiResponse({ status: 400, description: 'Bad Request...' })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@Patch('unlike/:postId')
 	async addUnlikeNumber(
@@ -115,11 +113,9 @@ export class PostsController {
 		return this.postsService.UpdateLikeOrUnLike(user, id, 'addUnlike')
 	}
 
+	//* 게시물 비추천취소 API
 	@ApiOperation({ summary: '해당 게시글의 비추천 취소', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
-	@ApiResponse({ status: 400, description: 'Bad Request...' })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@Delete('unlike/:postId')
 	async cancleAddUnLikeNumber(
@@ -129,12 +125,10 @@ export class PostsController {
 		return this.postsService.UpdateLikeOrUnLike(user, id, 'cancleUnlike')
 	}
 
+	//* 게시물 삭제 API
 	@ApiOperation({ summary: '해당 게시글의 삭제', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyPostIdDto })
-	@ApiResponse({ status: 400, description: 'Bad Request...' })
-	@ApiResponse({ status: 401, description: 'Unauthorized Error...' })
 	@ApiResponse({ status: 403, description: '다른유저의 게시물 삭제 시도' })
-	@ApiResponse({ status: 500, description: 'Server Error...' })
 	@UseGuards(JwtAuthGuard)
 	@Delete(':postId')
 	async deletePost(@CurrentUser() user: User, @Param('postId') id: string) {

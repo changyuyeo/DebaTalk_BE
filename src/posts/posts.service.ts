@@ -37,6 +37,58 @@ export class PostsService {
 		return post.readOnlyData
 	}
 
+	//* 게시물 생성 service
+	async createPost(
+		user: User,
+		body: PostRequestDto,
+		file?: Express.Multer.File
+	) {
+		const fileName = file ? `posts/${file.filename}` : null
+		const newPost = await this.postModel.create({
+			author: user.id,
+			imgUrl: fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default',
+			...body
+		})
+
+		return newPost.readOnlyData
+	}
+
+	//* 게시물 수정 service
+	async updatePost(
+		postId: string,
+		user: User,
+		body: PostRequestDto,
+		file?: Express.Multer.File
+	) {
+		const fileName = file ? `posts/${file.filename}` : null
+		const post = await this.postModel.findById(postId)
+
+		if (!post) throw new HttpException('해당 게시물을 찾을 수 없습니다.', 400)
+		const { category, title, content } = body
+
+		if (post.author === user.id) {
+			post.category = category
+			post.title = title
+			post.content = content
+			post.imgUrl = fileName
+				? `${process.env.SERVER_URI}/media/${fileName}`
+				: 'default'
+
+			const newPost = await post.save()
+			return newPost.readOnlyData
+		} else throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
+	}
+
+	//* 게시물 조회수 증가 service
+	async incViewCount(postId: string) {
+		const post = await this.postModel.findById(postId)
+		post.hits += 1
+		const newPost = await post.save()
+		return newPost.hits
+	}
+
 	//* 게시물 좋아요 or 싫어요 service
 	async UpdateLikeOrUnLike(
 		user: User,
@@ -78,50 +130,7 @@ export class PostsService {
 		}
 	}
 
-	//* 게시물 생성 service
-	async createPost(
-		user: User,
-		body: PostRequestDto,
-		file?: Express.Multer.File
-	) {
-		const fileName = file ? `posts/${file.filename}` : null
-		const newPost = await this.postModel.create({
-			author: user.id,
-			imgUrl: fileName
-				? `${process.env.SERVER_URI}/media/${fileName}`
-				: 'default',
-			...body
-		})
-
-		return newPost.readOnlyData
-	}
-
-	//* 게시물 수정 service
-	async updatePost(
-		postId: string,
-		user: User,
-		body: PostRequestDto,
-		file?: Express.Multer.File
-	) {
-		const fileName = file ? `posts/${file.filename}` : null
-		const post = await this.postModel.findById(postId)
-
-		if (!post) throw new HttpException('해당 게시물을 찾을 수 없습니다.', 400)
-		const { category, title, content } = body
-
-		if (post.author === user.id) {
-			post.category = category
-			post.title = title
-			post.content = content
-			post.imgUrl = fileName
-				? `${process.env.SERVER_URI}/media/${fileName}`
-				: 'default'
-
-			const newPost = await post.save()
-			return newPost
-		} else throw new UnauthorizedException('유저정보가 일치하지 않습니다.')
-	}
-
+	//* 게시물 삭제 service
 	async deletePost(user: User, id: string) {
 		const post = await this.postModel.findById(id)
 		if (!post) throw new HttpException('해당 게시물이 없습니다.', 400)
