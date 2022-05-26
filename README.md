@@ -8,6 +8,16 @@
 
 <br />
 
+로컬서버 시작
+
+```
+npm run start:dev
+or
+yarn start:dev
+```
+
+<br />
+
 ## 🔖 commit message style
 
 | message  | descripton                                                                                   |
@@ -34,7 +44,7 @@ settings.json
 node -v
 
 ```
-v16.13.1
+v16.14.2
 ```
 
 .env
