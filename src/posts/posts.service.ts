@@ -7,7 +7,11 @@ import { InjectModel } from '@nestjs/mongoose'
 import { model, Model } from 'mongoose'
 
 import { CommentSchema } from '@comments/comments.schema'
-import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
+import {
+	PostQueryDto,
+	PostRequestDto,
+	PostSearchQueryDto
+} from '@posts/dtos/posts.request.dto'
 import { Post } from '@posts/posts.schema'
 import { User } from '@users/users.schema'
 
@@ -26,8 +30,19 @@ export class PostsService {
 			.find()
 			.populate('comments', CommentsModel)
 			.sort({ hits: -1 })
-
 		const readOnlyPosts = posts.map(post => post.readOnlyData)
+
+		return readOnlyPosts
+	}
+
+	//* 게시물 검색 service
+	async getSearchPost(data: PostSearchQueryDto) {
+		const { category, title } = data
+		if (!category && !title)
+			throw new HttpException('category 또는 title 값은 필수 입니다.', 400)
+		const posts = await this.postModel.find(data)
+		const readOnlyPosts = posts.map(post => post.readOnlyData)
+
 		return readOnlyPosts
 	}
 

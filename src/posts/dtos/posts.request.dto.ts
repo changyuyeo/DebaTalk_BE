@@ -1,5 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
+
 import { Post } from '@posts/posts.schema'
+import { Category } from '@typings/category'
 
 export class PostRequestDto extends PickType(Post, [
 	'category',
@@ -19,4 +21,18 @@ export class PostQueryDto {
 		description: '출력할 데이터 시작부분 지정'
 	})
 	skip: string
+}
+
+export class PostSearchQueryDto {
+	@ApiProperty({
+		example: '첫번째 게시물 입니다!',
+		description: '검색할 제목'
+	})
+	title: string
+
+	@ApiProperty({
+		example: '첫번째 게시물 입니다!',
+		description: '검색할 제목'
+	})
+	category: Category
 }
