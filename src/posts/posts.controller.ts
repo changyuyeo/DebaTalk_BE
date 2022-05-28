@@ -18,11 +18,7 @@ import { JwtAuthGuard } from '@src/users/jwt/jwt.guard'
 import { CurrentUser } from '@common/decorators/user.decorator'
 import { multerOptions } from '@common/utils/multer.options'
 import { ReadOnlyPostDto, ReadOnlyPostIdDto } from '@posts/dtos/posts.dto'
-import {
-	PostQueryDto,
-	PostRequestDto,
-	PostSearchQueryDto
-} from '@posts/dtos/posts.request.dto'
+import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { PostsService } from '@posts/posts.service'
 import { ReadOnlyUserIdDto } from '@users/dtos/users.dto'
 import { User } from '@users/users.schema'
@@ -37,14 +33,6 @@ export class PostsController {
 	@Get('all')
 	async getAllPosts(@Query() query: PostQueryDto) {
 		return await this.postsService.getAllPosts(query)
-	}
-
-	//* 게시물 검색 API
-	@ApiOperation({ summary: '게시물 검색', tags: ['posts'] })
-	@ApiResponse({ status: 200, description: 'success', type: [ReadOnlyPostDto] })
-	@Get('search')
-	async getSearchPost(@Query() query: PostSearchQueryDto) {
-		return await this.postsService.getSearchPost(query)
 	}
 
 	//* 특정 게시물 조회 API

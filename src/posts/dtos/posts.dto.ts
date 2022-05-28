@@ -1,4 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
+
+import { CommentsDto } from '@comments/dtos/comments.dto'
 import { Post } from '@posts/posts.schema'
 
 export class ReadOnlyPostIdDto {
@@ -24,4 +26,10 @@ export class ReadOnlyPostDto extends PickType(Post, [
 		description: '고유 아이디'
 	})
 	id: string
+
+	@ApiProperty({
+		example: '624c480198bd174b28ef930b',
+		description: '고유 아이디'
+	})
+	comments: CommentsDto
 }

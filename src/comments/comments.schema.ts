@@ -6,7 +6,10 @@ import { Document, Types } from 'mongoose'
 
 @Schema()
 export class Comment extends Document {
-	@ApiProperty({ description: '댓글 작성자 id' })
+	@ApiProperty({
+		example: '6292397951401bd38a778803',
+		description: '댓글 작성자 id'
+	})
 	@Prop({ type: Types.ObjectId, required: true, ref: 'users' })
 	@IsNotEmpty()
 	author: Types.ObjectId

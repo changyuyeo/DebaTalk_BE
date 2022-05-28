@@ -7,11 +7,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { model, Model } from 'mongoose'
 
 import { CommentSchema } from '@comments/comments.schema'
-import {
-	PostQueryDto,
-	PostRequestDto,
-	PostSearchQueryDto
-} from '@posts/dtos/posts.request.dto'
+import { PostQueryDto, PostRequestDto } from '@posts/dtos/posts.request.dto'
 import { Post } from '@posts/posts.schema'
 import { User } from '@users/users.schema'
 
@@ -23,27 +19,37 @@ export class PostsService {
 
 	//* 모든 게시물 조회 service
 	async getAllPosts(data: PostQueryDto) {
-		const { limit, skip } = data
-		//* 정렬 (조회수, 추천수, 최신순) 구현
+		const { limit, skip, key, category, title } = data
 		const CommentsModel = model('comments', CommentSchema)
-		const posts = await this.postModel
-			.find()
-			.populate('comments', CommentsModel)
-			.sort({ hits: -1 })
-		const readOnlyPosts = posts.map(post => post.readOnlyData)
+		let posts: Post[]
 
-		return readOnlyPosts
-	}
+		if (key) {
+			//* key 값으로 정렬
+			if (key !== 'createDate' && key !== 'hits' && key !== 'likeList')
+				throw new HttpException('올바른 key 값이 아닙니다.', 400)
+			posts = await this.postModel
+				.find()
+				.populate('comments', CommentsModel)
+				.sort({ [key]: -1 })
+				.limit(limit ? Number(limit) : 3)
+				.skip(skip ? Number(skip) : 0)
+		} else if (category || title) {
+			//* 게시물 검색
+			posts = await this.postModel
+				.find({ category, title })
+				.populate('comments', CommentsModel)
+				.limit(limit ? Number(limit) : 10)
+				.skip(skip ? Number(skip) : 0)
+		} else {
+			//* 게시물 모두 조회
+			posts = await this.postModel
+				.find()
+				.populate('comments', CommentsModel)
+				.limit(limit ? Number(limit) : 10)
+				.skip(skip ? Number(skip) : 0)
+		}
 
-	//* 게시물 검색 service
-	async getSearchPost(data: PostSearchQueryDto) {
-		const { category, title } = data
-		if (!category && !title)
-			throw new HttpException('category 또는 title 값은 필수 입니다.', 400)
-		const posts = await this.postModel.find(data)
-		const readOnlyPosts = posts.map(post => post.readOnlyData)
-
-		return readOnlyPosts
+		return posts.map(post => post.readOnlyData)
 	}
 
 	//* 특정 게시물 조회 service
@@ -101,6 +107,7 @@ export class PostsService {
 		const post = await this.postModel.findById(postId)
 		post.hits += 1
 		const newPost = await post.save()
+
 		return newPost.hits
 	}
 
