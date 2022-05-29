@@ -54,7 +54,7 @@ export class PostsService {
 
 	//* 특정 게시물 조회 service
 	async getOnePost(id: string) {
-		const post = await this.postModel.findByIdAndRemove(id)
+		const post = await this.postModel.findById(id)
 		return post.readOnlyData
 	}
 

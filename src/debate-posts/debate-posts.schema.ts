@@ -1,22 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
+import { DebateCategory, DebateMethodType } from '@typings/post'
 import { IsNotEmpty, IsString } from 'class-validator'
 import * as dayjs from 'dayjs'
-import { Document, Types } from 'mongoose'
-
-import { Category } from '@typings/category'
+import { Document } from 'mongoose'
 
 @Schema()
 export class DebatePost extends Document {
 	@ApiProperty({ description: '토론 방식', example: '주제토론' })
 	@Prop({ default: '주제토론' })
 	@IsNotEmpty()
-	method: string
+	method: DebateMethodType
 
 	@ApiProperty({ description: '토론게시글 카테고리', example: '자유' })
 	@Prop({ default: '자유' })
 	@IsString()
-	category: Category
+	category: DebateCategory
 
 	@ApiProperty({
 		description: '토론게시글의 제목',
@@ -37,6 +36,14 @@ export class DebatePost extends Document {
 	@IsNotEmpty()
 	@IsString()
 	content: string
+
+	@ApiProperty({ description: '해당 게시글의 추천 리스트' })
+	@Prop({ default: [] })
+	likeList: Array<string>
+
+	@ApiProperty({ description: '해당 게시글의 비추천 리스트' })
+	@Prop({ default: [] })
+	unlikeList: Array<string>
 
 	@ApiProperty({ description: '해당 토론게시글의 찬성인원 리스트' })
 	@Prop({ default: [] })
@@ -63,7 +70,7 @@ export class DebatePost extends Document {
 	readonly readOnlyData: {
 		id: string
 		method: string
-		category: Category
+		category: DebateCategory
 		title: string
 		content: string
 		agreementList: Array<string>

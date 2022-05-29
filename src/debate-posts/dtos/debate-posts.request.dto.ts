@@ -1,15 +1,16 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 
-import { Post } from '@posts/posts.schema'
-import { Category, SortKeyType } from '@typings/post'
+import { DebatePost } from '@debatePosts/debate-posts.schema'
+import { DebateCategory, SortKeyType } from '@typings/post'
 
-export class PostRequestDto extends PickType(Post, [
+export class DebatePostRequestDto extends PickType(DebatePost, [
+	'method',
 	'category',
 	'title',
 	'content'
 ] as const) {}
 
-export class PostQueryDto {
+export class DebatePostQueryDto {
 	//* 페이지네이션
 	@ApiProperty({
 		example: '12',
@@ -26,7 +27,7 @@ export class PostQueryDto {
 	//* 정렬
 	@ApiProperty({
 		example: 'hits',
-		description: '정렬할 key 값 (likeList, hits, createDate)'
+		description: '정렬할 key 값 (hits, createDate)'
 	})
 	key: SortKeyType
 
@@ -41,5 +42,5 @@ export class PostQueryDto {
 		example: '자유',
 		description: '검색할 카테고리'
 	})
-	category: Category
+	category: DebateCategory
 }

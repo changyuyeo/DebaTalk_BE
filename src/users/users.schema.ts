@@ -58,6 +58,10 @@ export class User extends Document {
 	@Prop({ default: 0 })
 	point: number
 
+	@ApiProperty({ example: 0, description: '관리자 등급' })
+	@Prop({ default: 0 })
+	manageLevel: number
+
 	@ApiProperty({ example: '2022년 4월 5일', description: '생성일자' })
 	@Prop({ default: dayjs().format('YYYY년 MM월 DD일') })
 	createDate: string
@@ -70,6 +74,7 @@ export class User extends Document {
 		imgUrl: string
 		level: number
 		point: number
+		manageLevel: number
 		createDate: string
 	}
 }
@@ -85,6 +90,7 @@ UserSchema.virtual('readOnlyData').get(function (this: User) {
 		imgUrl: this.imgUrl,
 		level: this.level,
 		point: this.point,
+		manageLevel: this.manageLevel,
 		createDate: this.createDate
 	}
 })

@@ -5,7 +5,7 @@ import * as dayjs from 'dayjs'
 import { Document, Types } from 'mongoose'
 
 import { Comment } from '@comments/comments.schema'
-import { Category } from '@typings/category'
+import { Category } from '@typings/post'
 
 @Schema()
 export class Post extends Document {
@@ -39,11 +39,11 @@ export class Post extends Document {
 	@IsString()
 	content: string
 
-	@ApiProperty({ description: '해당 게시글의 추천수' })
+	@ApiProperty({ description: '해당 게시글의 추천 리스트' })
 	@Prop({ default: [] })
 	likeList: Array<string>
 
-	@ApiProperty({ description: '해당 게시글의 비추천수' })
+	@ApiProperty({ description: '해당 게시글의 비추천 리스트' })
 	@Prop({ default: [] })
 	unlikeList: Array<string>
 

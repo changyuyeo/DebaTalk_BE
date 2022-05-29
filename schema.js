@@ -5,8 +5,10 @@ const DebatePost = {
 	category: '자유',
 	title: '첫번째 게시글 입니다!',
 	content: '첫번째 게시글의 내용입니다!',
+	likeList: ['string'],
+	unlikeList: ['string'],
 	agreementList: [
-		//찬성인원리스트
+		// 찬성인원리스트
 		'string'
 	],
 	oppositionList: [
@@ -15,7 +17,6 @@ const DebatePost = {
 	],
 	hits: 0,
 	imgUrl: 'default',
-
 	createDate: '2022년 4월 5일',
 	id: '624c480198bd174b28ef930b'
 }
