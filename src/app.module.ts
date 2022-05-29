@@ -7,6 +7,7 @@ import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
 import { CommentsModule } from '@comments/comments.module'
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware'
+import { DebatePostsModule } from '@debatePosts/debate-posts.module'
 import { PostsModule } from '@posts/posts.module'
 import { UsersModule } from '@users/users.module'
 
@@ -18,6 +19,7 @@ import { UsersModule } from '@users/users.module'
 			useUnifiedTopology: true
 		}),
 		CommentsModule,
+		DebatePostsModule,
 		PostsModule,
 		UsersModule
 	],

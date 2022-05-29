@@ -113,7 +113,7 @@ export class PostsController {
 		return this.postsService.UpdateLikeOrUnLike(user, id, 'addUnlike')
 	}
 
-	//* 게시물 비추천취소 API
+	//* 게시물 비추천 취소 API
 	@ApiOperation({ summary: '해당 게시글의 비추천 취소', tags: ['posts'] })
 	@ApiResponse({ status: 200, description: 'success', type: ReadOnlyUserIdDto })
 	@UseGuards(JwtAuthGuard)

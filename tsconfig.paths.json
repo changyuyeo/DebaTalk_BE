@@ -4,6 +4,7 @@
 		"paths": {
 			"@comments/*": ["./src/comments/*"],
 			"@common/*": ["./src/common/*"],
+			"@debatePosts/*": ["./src/debate-posts/*"],
 			"@posts/*": ["./src/posts/*"],
 			"@typings/*": ["./src/typings/*"],
 			"@users/*": ["./src/users/*"],
