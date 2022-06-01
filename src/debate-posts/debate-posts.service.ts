@@ -70,7 +70,7 @@ export class DebatePostService {
 		if (user.manageLevel === 0)
 			throw new UnauthorizedException('권한이 없습니다.')
 
-		const fileName = file ? `debate_posts/${file.filename}` : null
+		const fileName = file ? `debate-posts/${file.filename}` : null
 		const newPost = await this.debatePostModel.create({
 			imgUrl: fileName
 				? `${process.env.SERVER_URI}/media/${fileName}`

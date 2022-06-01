@@ -5,7 +5,9 @@ import {
 	Param,
 	Post,
 	Query,
-	UploadedFile
+	UploadedFile,
+	UseGuards,
+	UseInterceptors
 } from '@nestjs/common'
 
 import { DebatePostService } from '@debatePosts/debate-posts.service'
@@ -15,6 +17,9 @@ import {
 	DebatePostQueryDto,
 	DebatePostRequestDto
 } from './dtos/debate-posts.request.dto'
+import { JwtAuthGuard } from '@users/jwt/jwt.guard'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { multerOptions } from '@common/utils/multer.options'
 
 @Controller('debate-posts')
 export class DebatePostController {
@@ -34,10 +39,12 @@ export class DebatePostController {
 
 	//* 토론게시물 생성 API
 	@Post('create')
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FileInterceptor('image', multerOptions('debate-posts')))
 	async createPost(
 		@UploadedFile() file: Express.Multer.File,
 		@CurrentUser() user: User,
-		@Body() body: DebatePostRequestDto
+		@Body() body: any
 	) {
 		return await this.debatePostService.createDebatePost(user, body, file)
 	}

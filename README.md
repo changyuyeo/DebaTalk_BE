@@ -63,3 +63,16 @@ JWT_SECRET=...
 SWAGGER_USER=...
 SWAGGER_PASSWORD=...
 ```
+
+<br />
+
+### todo-list
+
+- [x] debate-post schema 생성
+- [x] debate-post 생성, 조회, 특정 조회
+- [ ] debate-post 수정, 삭제, 좋아요 싫어요 등등 추가
+- [ ] debate-post common api 작성
+- [ ] 대댓글 기능 추가
+- [ ] report schema 생성, 기능 추가
+- [ ] community 추가
+- [ ] 알림기능 추가
